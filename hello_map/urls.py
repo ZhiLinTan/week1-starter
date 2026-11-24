@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django.urls import path
-from mapping.views import map_view
+from django.urls import include, path
 
 urlpatterns = [
-    path('', map_view, name='map'),
     path('admin/', admin.site.urls),
+    path('advanced-js-mapping/', include('advanced_js_mapping.urls')),
 ]
