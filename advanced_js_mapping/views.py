@@ -11,10 +11,10 @@ from django.db.models import Avg, Count, Sum
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.utils import timezone
-from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_http_methods
+from django.views.decorators.http import require_http_methods, require_safe
 
 from .models import AdvancedCity, PolygonAnalysis, SearchSession
+from .security import api_login_required
 
 logger = logging.getLogger(__name__)
 
@@ -59,14 +59,15 @@ def map_view(request):
         'cities_geojson': json.dumps(cities_geojson),
         'map_center_lat': 54.5,
         'map_center_lng': 15.0,
-        'map_zoom': 4
+        'map_zoom': 4,
+        'editable_cities': AdvancedCity.objects.filter(is_active=True).order_by('name', 'pk'),
     }
 
     return render(request, 'advanced_js_mapping/map.html', context)
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
+@api_login_required
 def polygon_search(request):
     """
     API endpoint for polygon-based spatial search of cities.
@@ -232,6 +233,7 @@ def polygon_search(request):
         }, status=500)
 
 
+@require_safe
 def cities_api(request):
     """
     API endpoint to list all cities with optional filtering and pagination.
@@ -468,8 +470,8 @@ def analytics_view(request):
         return render(request, 'advanced_js_mapping/analytics.html', context)
 
 
-@csrf_exempt
 @require_http_methods(["POST"])
+@api_login_required
 def distance_search(request):
     """
     API endpoint for distance-based (radius) search around a point.

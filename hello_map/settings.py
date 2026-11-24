@@ -25,6 +25,11 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-key")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False") == "True"
+
+LOGIN_URL = "login"
+LOGIN_REDIRECT_URL = "advanced_js_mapping:map"
+LOGOUT_REDIRECT_URL = "advanced_js_mapping:map"
+
 SECURE_REFERRER_POLICY = "strict-origin-when-cross-origin"
 
 ALLOWED_HOSTS = ['*']
